@@ -1,4 +1,4 @@
-import type { ToolSet, LanguageModelMiddleware } from "ai";
+import type { ToolSet, LanguageModelMiddleware, PrepareStepFunction, Tool } from "ai";
 import type {
   SearchEngine,
   SearchResult,
@@ -42,6 +42,11 @@ function extractParamNames(toolDef: unknown): string[] {
   return [];
 }
 
+export interface ToolContext<TOOLS extends Record<string, Tool>> {
+  tools: TOOLS;
+  prepareStep: PrepareStepFunction<TOOLS> | undefined;
+}
+
 export interface ToolIndex {
   /** Pre-compute embeddings eagerly so the first select() is fast. */
   warmUp(): Promise<void>;
@@ -51,6 +56,28 @@ export interface ToolIndex {
 
   /** Returns a prepareStep function for ToolLoopAgent / generateText / streamText. */
   prepareStep(options?: SelectOptions): ReturnType<typeof createPrepareStep>;
+
+  /**
+   * Returns `{ tools, prepareStep }` typed against the concrete tools you pass.
+   *
+   * Bridges toolpick's string-based tool selection with the AI SDK's generic
+   * type system. Pass the result directly to `streamText` / `generateText` —
+   * `prepareStep` is typed against the same `TOOLS` parameter, so no widening
+   * or casting is needed at the call site.
+   *
+   * @example
+   * ```ts
+   * const ctx = index.createContext(myTools, { maxTools: 5 });
+   * const result = streamText({
+   *   tools: ctx.tools,
+   *   prepareStep: ctx.prepareStep,
+   * });
+   * ```
+   */
+  createContext<const TOOLS extends Record<string, Tool>>(
+    tools: TOOLS,
+    options?: SelectOptions,
+  ): ToolContext<TOOLS>;
 
   /** Returns a LanguageModelMiddleware for transparent integration via wrapLanguageModel. */
   middleware(options?: SelectOptions): LanguageModelMiddleware;
@@ -219,6 +246,17 @@ export function createToolIndex(
 
     prepareStep(stepOptions?: SelectOptions) {
       return createPrepareStep(engine, toolNames, stepOptions);
+    },
+
+    createContext<const TOOLS extends Record<string, Tool>>(
+      tools: TOOLS,
+      contextOptions?: SelectOptions,
+    ): ToolContext<TOOLS> {
+      const rawPrepareStep = createPrepareStep(engine, toolNames, contextOptions);
+      return {
+        tools,
+        prepareStep: rawPrepareStep as unknown as PrepareStepFunction<TOOLS>,
+      };
     },
 
     middleware(mwOptions?: SelectOptions): LanguageModelMiddleware {

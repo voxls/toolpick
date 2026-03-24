@@ -1,5 +1,5 @@
 export { createToolIndex } from "./tool-index.ts";
-export type { ToolIndex } from "./tool-index.ts";
+export type { ToolContext, ToolIndex } from "./tool-index.ts";
 export type {
   SearchStrategy,
   SelectOptions,
