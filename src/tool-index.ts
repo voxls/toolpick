@@ -113,7 +113,7 @@ function findElbow(results: SearchResult[], max: number): SearchResult[] {
   return results.slice(0, max);
 }
 
-function buildToolDescription(name: string, toolDef: ToolSet[string]): string {
+function buildToolDescription(_name: string, toolDef: ToolSet[string]): string {
   const parts: string[] = [];
 
   if (toolDef.description) {

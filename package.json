@@ -39,6 +39,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
+    "lint": "biome check src",
+    "lint:fix": "biome check --write src",
     "test": "bun test src/test"
   },
   "peerDependencies": {

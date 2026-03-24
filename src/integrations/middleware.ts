@@ -10,7 +10,7 @@ import type { SearchEngine, SelectOptions } from "../search/types.ts";
  */
 export function createMiddleware(
   engine: SearchEngine,
-  toolNames: string[],
+  _toolNames: string[],
   options: SelectOptions = {},
 ): LanguageModelMiddleware {
   const { maxTools = 5, alwaysActive = [] } = options;
