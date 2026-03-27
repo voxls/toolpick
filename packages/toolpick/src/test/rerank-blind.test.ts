@@ -1,4 +1,6 @@
 import { describe, it, expect } from "bun:test";
+
+const hasApiKey = !!process.env.OPENAI_API_KEY;
 import { openai } from "@ai-sdk/openai";
 import { createToolIndex } from "../tool-index";
 import { tool, jsonSchema } from "ai";
@@ -72,7 +74,7 @@ const ALL_BLIND: Array<[string, string]> = [
 
 const TIMEOUT = 120_000;
 
-describe("Combined + re-ranking — blind user queries", () => {
+describe.skipIf(!hasApiKey)("Combined + re-ranking — blind user queries", () => {
   const index = createToolIndex(allTools, {
     embeddingModel: openai.embeddingModel("text-embedding-3-small"),
     rerankerModel: openai("gpt-4o-mini"),
@@ -101,7 +103,7 @@ describe("Combined + re-ranking — blind user queries", () => {
   }, TIMEOUT);
 });
 
-describe("Combined + enrichment + re-ranking — blind user queries", () => {
+describe.skipIf(!hasApiKey)("Combined + enrichment + re-ranking — blind user queries", () => {
   const index = createToolIndex(allTools, {
     embeddingModel: openai.embeddingModel("text-embedding-3-small"),
     rerankerModel: openai("gpt-4o-mini"),
