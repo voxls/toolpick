@@ -25,7 +25,7 @@
   },
   "overrides": [
     {
-      "includes": ["src/test/**"],
+      "includes": ["packages/*/src/test/**"],
       "linter": {
         "rules": {
           "suspicious": {

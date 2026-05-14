@@ -1,0 +1,40 @@
+{
+  "name": "@voxls/toolpick-cache-redis",
+  "version": "0.1.0",
+  "description": "Redis-based embedding cache for @voxls/toolpick",
+  "type": "module",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "bun test src/test"
+  },
+  "peerDependencies": {
+    "@voxls/toolpick": ">=0.1.0"
+  },
+  "peerDependenciesMeta": {
+    "@voxls/toolpick": {
+      "optional": false
+    }
+  },
+  "dependencies": {
+    "ioredis": "^5.6.1"
+  },
+  "devDependencies": {
+    "@voxls/toolpick": "workspace:*",
+    "@types/node": "^25.5.0"
+  }
+}

@@ -1,4 +1,6 @@
 import { describe, it, expect } from "bun:test";
+
+const hasApiKey = !!process.env.OPENAI_API_KEY;
 import { openai } from "@ai-sdk/openai";
 import { CombinedSearch } from "../search/combined";
 import type { ToolDescription } from "../search/types";
@@ -63,7 +65,7 @@ const KNOWN_HARD: Array<[string, string]> = [
   ["get the CI running", "triggerGitHubAction"],
 ];
 
-describe("Combined search — blind user queries (real embeddings)", () => {
+describe.skipIf(!hasApiKey)("Combined search — blind user queries (real embeddings)", () => {
   const combined = new CombinedSearch(SAAS_TOOLS, model);
 
   describe("must-hit queries", () => {
